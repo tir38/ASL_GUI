@@ -1,0 +1,108 @@
+function boundingBox = SubtractDominantMotion(image1, image2, oldBoundingBox)
+% Jason Atwood
+% 10/14/2012 - created for HW #3
+% 10/25/2012 - updated for ASL project
+warning on verbose
+
+% inputs:
+% - image1 : image at time t
+% - image2 : image at time t+1
+
+% outputs:
+% - boundingBox : [1 x 4] vector of bounding box [x_min, y_min, x_max, y_max]
+
+% subfunctions:
+% - LucasKanade by Jason Atwood
+% - warpImage by Jason Atwood
+% - hysthresh by Peter Kovesi
+
+
+%% ========== code ===========
+[height,width] = size(image1);
+% expanding bounding box by 10 pixels in each direction
+expandedBoundingBox = [oldBoundingBox(1) - 10, ...
+                       oldBoundingBox(2) - 10, ...
+                       oldBoundingBox(3) + 10, ...
+                       oldBoundingBox(4) + 10];
+
+if expandedBoundingBox(1)<1
+    expandedBoundingBox(1) = 1;
+end
+if expandedBoundingBox(2) < 1
+    expandedBoundingBox(2) = 1;
+end
+if expandedBoundingBox(3) > width
+    expandedBoundingBox(3) = width;
+end
+if expandedBoundingBox(4) > height
+    expandedBoundingBox(4) = height;
+end
+
+% pull expanded bounding box from each image
+image1 = image1(expandedBoundingBox(2):expandedBoundingBox(4),expandedBoundingBox(1):expandedBoundingBox(3)); % pull template out of It
+image2 = image2(expandedBoundingBox(2):expandedBoundingBox(4),expandedBoundingBox(1):expandedBoundingBox(3)); % pull rectangle out of It1
+
+% run Lucas Kanade (translation only)
+[u,v] = LucasKanade(image1, image2, expandedBoundingBox);
+
+% compute M
+M = [1, 0, 0;...
+     0, 1, 0; ...
+     u, v, 1];
+ 
+% generate matlab transformation handle from this linear affine transformation
+affineTransformation = maketform('affine',M);
+image1_transformed = imtransform(image1,affineTransformation, 'XData',[1 size(image1,2)],'YData',[1 size(image1,1)]); % transform image1 to image 2 frame;  set background to black
+
+% subtract transformed image1 from image2
+difference = image2 - image1_transformed;
+
+% threshold difference, may need hysthresh
+maximum = max(max(difference));
+threshold = maximum*(.65); % treat threshold as a percentage of max error
+moving_image = difference;
+moving_image(moving_image < threshold) = 0;
+% moving_image(moving_image >= threshold) = 1;
+
+% determine bounding box for "moving image"
+[y_indices_of_non_zero, x_indices_of_non_zero, ~] = find(moving_image);
+
+x_min = min(x_indices_of_non_zero);
+x_max = max(x_indices_of_non_zero);
+y_min = min(y_indices_of_non_zero);
+y_max = max(y_indices_of_non_zero);
+
+boundingBox = [x_min, y_min, x_max, y_max];
+
+
+%% plot some cool figures
+figure(2)
+
+subplot(1,2,1)
+imshow(image1)
+title('image 1')
+
+hold on
+h1=line([x_min x_min],[y_min ,y_max]);
+h2=line([x_min x_max],[y_min, y_min]);
+h3=line([x_max x_max],[y_min, y_max]);
+h4=line([x_min x_max],[y_max, y_max]);
+
+% subplot(2,2,2)
+% imshow(image2)
+% title('image 2')
+
+% subplot(2,2,3)
+% imshow(image1_transformed)
+% title('image 1 transformed')
+
+subplot(1,2,2)
+imshow(moving_image,[0,max(max(moving_image))])
+title_string = strcat('thresholded difference, t > ', num2str(threshold));
+title(title_string)
+
+hold off
+
+%% ========== end code ===========
+% fprintf('\nDone!\n')
+% toc

@@ -1,0 +1,19 @@
+% Mean-Shift Video Tracking
+% Copyright by Sylvain Bernhardt
+% July 2008
+% Updated March 2012
+
+USAGE:
+------
+Place a video in the Videos folder. The video has to be of a codec readable
+by Matlab (see help for 'mmreader').
+A sample video (Ball.avi) is provided. This video shows a good example of how
+it is easy to lose a target once it goes too fast. Play around a bit with it
+to see which ball can be tracked successfully along the complete sequence.
+Example: http://www.youtube.com/watch?v=uVFrYtue2CE
+
+Run an example with the sample video:
+>> MS_Tracking_EXAMPLE
+
+Run the GUI:
+>> GUI
