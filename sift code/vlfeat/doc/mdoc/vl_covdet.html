@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <!-- Favicon -->
+  <link href="../images/vl_blue.ico" type="image/x-icon" rel="icon"></link>
+  <link href="../images/vl_blue.ico" type="image/x-icon" rel="shortcut icon"></link>
+
+  <!-- Stylesheets -->
+  <link href="../web.css" type="text/css" rel="stylesheet"></link>
+  <link href="../pygmentize.css" type="text/css" rel="stylesheet"></link>
+  <title>VLFeat - Documentation - Matlab API - SIFT - vl_covdet</title>
+  
+
+  <!-- Scripts-->
+  
+
+  <!-- Google Custom Search -->
+  <script xml:space="preserve">
+    (function() {
+    var cx = '003215582122030917471:oq23albfeam';
+    var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+    '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+    })();
+  </script>
+
+  <!-- Google Analytics -->
+  <script xml:space="preserve" type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-4936091-2']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+ </head>
+
+ <!-- Body Start -->
+ <body>
+  <div id="header">
+   <!-- Google CSE Search Box -->
+   <div id="google" class="gcse-searchbox-only" data-resultsUrl="http://www.vlfeat.org/search.html"></div>
+   <h1><a shape="rect" href="../index.html" class="plain"><span id="vlfeat">VLFeat</span><span id="dotorg">.org</span></a></h1>
+  </div>
+  <div id="headbanner">
+   Documentation - Matlab API - SIFT - vl_covdet
+  </div>
+  <div id="pagebody">
+   <div id="sidebar"> <!-- Navigation Start -->
+    <ul>
+<li><a href="../index.html">Home</a>
+</li>
+<li><a href="../download.html">Download</a>
+</li>
+<li><a href="../doc.html">Documentation</a>
+<ul>
+<li><a href="mdoc.html">Matlab API</a>
+</li>
+<li><a href="../api/index.html">C API</a>
+</li>
+<li><a href="../man/man.html">Man pages</a>
+</li>
+</ul></li>
+<li><a href="../overview/tut.html">Tutorials</a>
+</li>
+<li><a href="../applications/apps.html">Applications</a>
+</li>
+</ul>
+
+   </div> <!-- sidebar -->
+   <div id="content">
+    <div class="mdoc">
+<ul class="breadcrumb"><li><a href="mdoc.html">Index</a></li><li><a href="vl_quickvis.html">Prev</a></li><li><a href="vl_dsift.html">Next</a></li></ul><div class="documentation"><p>
+<a href="vl_covdet.html">VL_COVDET</a>() implements a number of co-variant feature detectors
+(e.g., DoG, Harris-Affine, Harris-Laplace) and allow to compute
+corresponding feature descriptors (SIFT, raw patches).
+</p><p>
+F = <a href="vl_covdet.html">VL_COVDET</a>(I) detects upright scale and translation covariant
+features based on the Difference of Gaussian (Dog) cornerness
+measure from image I (a grayscale image of class SINGLE). F is in
+the format of oriented ellipse feature frames (see <a href="vl_plotframe.html">VL_PLOTFRAME</a>()
+for the definition) even if features are only scale-invariant
+(discs or oriented discs).
+</p><p>
+<a href="vl_covdet.html">VL_COVDET</a>(I, 'Method', METHOD) allows using one of the
+following methods instead:
+</p><dl><dt>
+DoG
+</dt><dd><p>
+The Difference of Gaussians is an approximate version of the
+multiscale trace of Laplacian operator [1].
+</p></dd><dt>
+Hessian
+</dt><dd><p>
+Determinant Hessian operator [2].
+</p></dd><dt>
+HessianLaplace
+</dt><dd><p>
+Determinant of Hessian for space localisation, trace of
+Laplacian for scale detection [2].
+</p></dd><dt>
+HarrisLaplace
+</dt><dd><p>
+Harris cornerness measure for space localisation, trace
+of Laplacian for scale detection [2].
+</p></dd><dt>
+MultiscaleHessian
+</dt><dd><p>
+Same as HessianLaplace, but Laplacian scale detection is not
+performend (features are simply detected at multiple scales) [2].
+</p></dd><dt>
+MultiscaleHarris
+</dt><dd><p>
+Same as HarrisLaplace, but Laplacian scale detection is not
+performend (features are simply detected at multiple scales) [2].
+</p></dd></dl><p>
+The number of detected features is affected by the
+'PeakThreshold', which sets the minimum absolute vale of the
+cornerness measure to accept a feature. A larger threshold select
+fewer features. To adjust the threshold, the score of the detected
+features can be obtained in the INFO structure (see later).
+</p><p>
+Features can also be filtered by setting the 'EdgeThreshold'
+parameters, which sets an upper bound on the ratio of the maxium
+over the minium curvature of the cornerness measure at the
+detected location. The idea is that unbalanced curvatures
+correspond to features detected along image edges, and should
+therefore be discarded as spatially unstable.
+</p><p>
+<a href="vl_covdet.html">VL_COVDET</a>(..., 'EstimateAffineShape', true) switches on affine
+adaptation, which attempts to estimate the affine co-variant shape
+of each feature based on the algorihtm of [2].
+</p><p>
+<a href="vl_covdet.html">VL_COVDET</a>(..., 'EstimateOrientations', true) switches on the
+estimation of the orientation of features (which are therefore not
+upright anymore) []. Note that more than one orientation can be
+associated to each feature, creating copies of them.
+</p><p>
+<a href="vl_covdet.html">VL_COVDET</a>(..., 'Frames', F) allows to specify user defined frames
+F. This skips detection, but estimating the affine shape or the
+orietnations can still be applied. Moreover, descriptors for these
+frames can be computed.
+</p><p>
+[F,D] = <a href="vl_covdet.html">VL_COVDET</a>(I, ...) computes the SIFT descriptors [1] for
+the detected features. Each column of D is the descriptor of the
+corresponding frame in F. A descriptor is a 128-dimensional vector
+of class SINGLE. The same format of <a href="vl_sift.html">VL_SIFT</a>() is used. SIFT
+features are computed on normalised image patches that are
+affected by the parameters explained next (for example, to comptue
+SIFT on a larger measurement reagion, increase the value of
+PatchRelativeExtent.
+</p><p>
+[F,D] = <a href="vl_covdet.html">VL_COVDET</a>(I, 'descriptor', 'patch') can be used to extract
+raw patches instead of SIFT descriptors. In this case, each column
+of D is a stacked square image patch. The following parameters
+can be used to control the produced patches:
+</p><dl><dt>
+PatchResolution
+<span class="defaults">15</span></dt><dd><p>
+The size of the patch R in pixel. Specifically, the patch is a
+square of side 2*R+1 pixels.
+</p></dd><dt>
+PatchRelativeExtent
+<span class="defaults">7.5</span></dt><dd><p>
+The extent E of the patch in the feature frame. A feature F
+define a mapping from the feature reference frame to the image
+reference frame as an affine transformation A,T (see
+<a href="vl_plotframe.html">VL_PLOTFRAME</a>()). The patch is a square [-E, E]^2 in this frame
+(transform this square by A,T to find the extent in the image).
+</p></dd></dl><p>
+PatchRelativeSigma: 1.0
+</p><pre>
+  The smoothing SIGMA of the patch in the patch frame. The
+  computed patch can be thought as being obtained by first
+  warping the image (as a continous signal) by A,T, then
+  smoothing the results by SIGMA, and then sampling.
+</pre><p>
+[F,D,INFO] = <a href="vl_covdet.html">VL_COVDET</a>(...) returns an additiona structure INFO
+with the following members:
+</p><dl><dt>
+info.peakScores
+</dt><dd><p>
+The peak scores of the detected features.
+</p></dd><dt>
+info.edgeScores
+</dt><dd><p>
+The edge scores of the detected features.
+</p></dd><dt>
+info.gss
+</dt><dd><p>
+The Gaussian scale space (see <a href="vl_plotss.html">VL_PLOTSS</a>()).
+</p></dd><dt>
+info.css
+</dt><dd><p>
+The cornerness measure scale space (see <a href="vl_plotss.html">VL_PLOTSS</a>()).
+</p></dd></dl><p>
+The function supports the following options:
+</p><dl><dt>
+OctaveResolution
+<span class="defaults">3</span></dt><dd><p>
+The number of scale levels sampled per octave when constructing
+the scale spaces.
+</p></dd><dt>
+DoubleImage
+<span class="defaults">true</span></dt><dd><p>
+Whether to double the image before extracting features. This
+allows to detect features at a smoothing level of 0.5 and up
+rathern than 1.0 and up, resulting in many more small
+features being detected.
+</p></dd><dt>
+Verbose
+</dt><dd><p>
+If specified, it incerases the verbosity level.
+</p></dd><dt>
+REFERENCES
+</dt></dl><p>
+[1] D. G. Lowe, Distinctive image features from scale-invariant
+keypoints. IJCV, vol. 2, no. 60, pp. 91-110, 2004.
+</p><p>
+[2] K. Mikolajcyk and C. Schmid, An affine invariant interest
+point detector. ICCV, vol. 2350, pp. 128-142, 2002.
+</p><p>
+See also: <a href="vl_sift.html">VL_SIFT</a>(), <a href="vl_plotframe.html">VL_PLOTFRAME</a>(), <a href="vl_plotss.html">VL_PLOTSS</a>(), <a href="vl_help.html">VL_HELP</a>().
+</p></div></div>
+   </div>
+   <div class="clear">&nbsp;</div>
+  </div> <!-- pagebody -->
+  <div id="footer">
+   &copy; 2007-12 The VLFeat Authors
+  </div> <!-- footer -->
+ </body>
+ <!-- Body ends -->
+</html>
+
+ 

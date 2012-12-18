@@ -1,0 +1,277 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <!-- Favicon -->
+  <link href="../images/vl_blue.ico" type="image/x-icon" rel="icon"></link>
+  <link href="../images/vl_blue.ico" type="image/x-icon" rel="shortcut icon"></link>
+
+  <!-- Stylesheets -->
+  <link href="../web.css" type="text/css" rel="stylesheet"></link>
+  <link href="../pygmentize.css" type="text/css" rel="stylesheet"></link>
+  <title>VLFeat - Tutorials - HOG</title>
+  
+
+  <!-- Scripts-->
+  
+
+  <!-- Google Custom Search -->
+  <script xml:space="preserve">
+    (function() {
+    var cx = '003215582122030917471:oq23albfeam';
+    var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+    '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+    })();
+  </script>
+
+  <!-- Google Analytics -->
+  <script xml:space="preserve" type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-4936091-2']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+ </head>
+
+ <!-- Body Start -->
+ <body>
+  <div id="header">
+   <!-- Google CSE Search Box -->
+   <div id="google" class="gcse-searchbox-only" data-resultsUrl="http://www.vlfeat.org/search.html"></div>
+   <h1><a shape="rect" href="../index.html" class="plain"><span id="vlfeat">VLFeat</span><span id="dotorg">.org</span></a></h1>
+  </div>
+  <div id="headbanner">
+   Tutorials - HOG
+  </div>
+  <div id="pagebody">
+   <div id="sidebar"> <!-- Navigation Start -->
+    <ul>
+<li><a href="../index.html">Home</a>
+</li>
+<li><a href="../download.html">Download</a>
+</li>
+<li><a href="../doc.html">Documentation</a>
+</li>
+<li><a href="tut.html">Tutorials</a>
+<ul>
+<li><a href="covdet.html">Covdet</a>
+</li>
+<li><a href="hog.html" class='active' >HOG</a>
+</li>
+<li><a href="sift.html">SIFT</a>
+</li>
+<li><a href="dsift.html">DSIFT/PHOW</a>
+</li>
+<li><a href="mser.html">MSER</a>
+</li>
+<li><a href="ikm.html">IKM</a>
+</li>
+<li><a href="hikm.html">HIKM</a>
+</li>
+<li><a href="aib.html">AIB</a>
+</li>
+<li><a href="quickshift.html">Quick shift</a>
+</li>
+<li><a href="slic.html">SLIC</a>
+</li>
+<li><a href="kdtree.html">kd-tree</a>
+</li>
+<li><a href="imdisttf.html">Distance transf.</a>
+</li>
+<li><a href="utils.html">Utils</a>
+</li>
+<li><a href="pegasos.html#tut.pegasos">Pegasos</a>
+</li>
+<li><a href="plots-rank.html">Plots: rank</a>
+</li>
+</ul></li>
+<li><a href="../applications/apps.html">Applications</a>
+</li>
+</ul>
+
+   </div> <!-- sidebar -->
+   <div id="content">
+     
+
+<p>The <b>HOG</b> features are widely use for object detection. HOG
+decomposes an image into small squared cells, computes an histogram of
+oriented gradients in each cell, normalizes the result using a
+block-wise pattern, and return a descriptor for each cell.</p>
+
+<p>Stacking the cells into a squared image region can be used as an
+image window descriptor for object detection, for example by means of
+an SVM.</p>
+
+<p>This tutorial shows how to use the VLFeat
+function <code>vl_hog</code> to compute HOG features of various kind
+and manipulate them.</p>
+
+<ul>
+ <li><a shape="rect" href="hog.html#tut.hog.basic">Basic HOG computation</a></li>
+ <li><a shape="rect" href="hog.html#tut.hog.flip">Flipping HOG from left to right</a></li>
+ <li><a shape="rect" href="hog.html#tut.hog.params">Other HOG parameters</a></li>
+</ul>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<h1 id="tut.hog.basic">Basic HOG computation</h1>
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<p>We start by considering an example input image:</p>
+
+<div class="figure">
+  <image src="../demo/hog_image.jpg"></image>
+  <div class="caption">An example image.</div>
+</div>
+
+<p>HOG is computed by calling the <code>vl_hog</code> function:</p>
+
+<div class="highlight"><pre><span class="n">cellSize</span> <span class="p">=</span> 8 <span class="p">;</span>
+<span class="n">hog</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">cellSize</span><span class="p">,</span> <span class="s">&#39;verbose&#39;</span><span class="p">)</span> <span class="p">;</span>
+</pre></div>
+
+
+<p>The same function can also be used to generate a pictorial
+rendition of the features, although this unavoidably destroys some of
+the information contained in the feature itself. To this end, use the
+<code>render</code> command:</p>
+
+<div class="highlight"><pre><span class="n">imhog</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="s">&#39;render&#39;</span><span class="p">,</span> <span class="n">hog</span><span class="p">,</span> <span class="s">&#39;verbose&#39;</span><span class="p">)</span> <span class="p">;</span>
+<span class="n">clf</span> <span class="p">;</span> <span class="n">imagesc</span><span class="p">(</span><span class="n">imhog</span><span class="p">)</span> <span class="p">;</span> <span class="n">colormap</span> <span class="n">gray</span> <span class="p">;</span>
+</pre></div>
+
+
+<p>This should produce the following image:</p>
+
+<div class="figure">
+  <image src="../demo/hog_features.jpg"></image>
+  <div class="caption">Standard HOG features with a cell size of eight pixels.</div>
+</div>
+
+<p>HOG is an array of cells, with the third dimension spanning feature
+components:</p>
+
+<div class="highlight"><pre><span class="o">&gt;</span> <span class="nb">size</span><span class="p">(</span><span class="n">hog</span><span class="p">)</span>
+
+<span class="nb">ans</span> <span class="p">=</span>
+
+    16    16    31
+</pre></div>
+
+
+<p>In this case the feature has 31 dimensions. HOG exists in many
+variants. VLFeat supports two: the UoCTTI variant (used by default)
+and the original Dalal-Triggs variant (with 2&times;2 square HOG
+blocks for normalization). The main difference is that the UoCTTI
+variant computes bot directed and undirected gradients as well as a
+four dimensional texture-energy feature, but projects the result down
+to 31 dimensions. Dalal-Triggs works instead with undirected gradients
+only and does not do any compression, for a total of 36
+dimension. The Dalal-Triggs variant can be computed as</p>
+
+<div class="highlight"><pre><span class="c">% Dalal-Triggs variant</span>
+<span class="n">cellSize</span> <span class="p">=</span> 8 <span class="p">;</span>
+<span class="n">hog</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">cellSize</span><span class="p">,</span> <span class="s">&#39;verbose&#39;</span><span class="p">,</span> <span class="s">&#39;variant&#39;</span><span class="p">,</span> <span class="s">&#39;dalaltriggs&#39;</span><span class="p">)</span> <span class="p">;</span>
+<span class="n">imhog</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="s">&#39;render&#39;</span><span class="p">,</span> <span class="n">hog</span><span class="p">,</span> <span class="s">&#39;verbose&#39;</span><span class="p">,</span> <span class="s">&#39;variant&#39;</span><span class="p">,</span> <span class="s">&#39;dalaltriggs&#39;</span><span class="p">)</span> <span class="p">;</span>
+</pre></div>
+
+
+<p>The result is visually very similar:</p>
+
+<div class="figure">
+  <image src="../demo/hog_features_dalal_triggs.jpg"></image>
+  <div class="caption">Dalal-Triggs variant. Differences with the
+  standard version are difficult to appreciated in the
+  rendition.</div>
+</div>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<h1 id="tut.hog.flip">Flipping HOG from left to right</h1>
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<p>Often it is necessary to flip HOG features from left to right (for
+example in order to model an axis symmetric object). This can be obtained
+analytically from the feature itself by permuting the histogram dimensions
+appropriately. The permutation is obtained as follows:</p>
+
+<div class="highlight"><pre><span class="c">% Get permutation to flip a HOG cell from left to right</span>
+<span class="n">perm</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="s">&#39;permutation&#39;</span><span class="p">)</span> <span class="p">;</span>
+</pre></div>
+
+
+<p>Then these two examples produce identical results (provided that
+the image contains an exact number of cells:</p>
+
+<div class="highlight"><pre><span class="n">imHog</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="s">&#39;render&#39;</span><span class="p">,</span> <span class="n">hog</span><span class="p">)</span> <span class="p">;</span>
+<span class="n">imHogFromFlippedImage</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="s">&#39;render&#39;</span><span class="p">,</span> <span class="n">hogFromFlippedImage</span><span class="p">)</span> <span class="p">;</span>
+<span class="n">imFlippedHog</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="s">&#39;render&#39;</span><span class="p">,</span> <span class="n">flippedHog</span><span class="p">)</span> <span class="p">;</span>
+</pre></div>
+
+
+<p>This is shown in the figure:</p>
+
+<div class="figure">
+  <image src="../demo/hog_flipping.jpg"></image>
+  <div class="caption">Flipping HOG features from left to right either
+  by flipping the input image or the features directly.</div>
+</div>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<h1 id="tut.hog.params">Other HOG parameters</h1>
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<p><code>vl_hog</code> supports other parameters as well. For example,
+one can specify the number of orientations in the histograms by the
+<code>numOrientations</code> option:</p>
+
+<div class="highlight"><pre><span class="c">% Specify the number of orientations</span>
+<span class="n">hog</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">cellSize</span><span class="p">,</span> <span class="s">&#39;verbose&#39;</span><span class="p">,</span> <span class="s">&#39;numOrientations&#39;</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="p">;</span>
+<span class="n">imhog</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="s">&#39;render&#39;</span><span class="p">,</span> <span class="n">hog</span><span class="p">,</span> <span class="s">&#39;verbose&#39;</span><span class="p">,</span> <span class="s">&#39;numOrientations&#39;</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="p">;</span>
+</pre></div>
+
+
+<p>Changing the number of orientations changes the features quite
+significantly:</p>
+
+<div class="figure">
+  <image src="../demo/hog_num_orientations.jpg"></image>
+  <div class="caption">HOG features for <code>numOrientations</code>
+equal to 3, 4, 5, 9, and 21 repsectively.</div>
+</div>
+
+<p>Another useful option is <code>BilinearOrientations</code> switching
+on the bilinear orientation assignment of the gradient (this is not used
+in certain implementation like UoCTTI).</p>
+
+<div class="highlight"><pre><span class="c">% Specify the number of orientations</span>
+<span class="n">hog</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="n">cellSize</span><span class="p">,</span><span class="s">&#39;numOrientations&#39;</span><span class="p">,</span> 4<span class="p">)</span> <span class="p">;</span>
+<span class="n">imhog</span> <span class="p">=</span> <span class="n">vl_hog</span><span class="p">(</span><span class="s">&#39;render&#39;</span><span class="p">,</span> <span class="n">hog</span><span class="p">,</span> <span class="s">&#39;numOrientations&#39;</span><span class="p">,</span> 4<span class="p">)</span> <span class="p">;</span>
+</pre></div>
+
+
+<p>resulting in</p>
+
+<div class="figure">
+  <image src="../demo/hog_bilinear_orientations.jpg"></image>
+  <div class="caption">From left to right: input image, hard
+  orientation assigments for <code>numOrientations</code> equals to
+  four, and soft orientation assigments.</div>
+</div>
+
+
+   </div>
+   <div class="clear">&nbsp;</div>
+  </div> <!-- pagebody -->
+  <div id="footer">
+   &copy; 2007-12 The VLFeat Authors
+  </div> <!-- footer -->
+ </body>
+ <!-- Body ends -->
+</html>
+
+ 

@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <!-- Favicon -->
+  <link href="../images/vl_blue.ico" type="image/x-icon" rel="icon"></link>
+  <link href="../images/vl_blue.ico" type="image/x-icon" rel="shortcut icon"></link>
+
+  <!-- Stylesheets -->
+  <link href="../web.css" type="text/css" rel="stylesheet"></link>
+  <link href="../pygmentize.css" type="text/css" rel="stylesheet"></link>
+  <title>VLFeat - Documentation - Matlab API - SIFT - vl_siftdescriptor</title>
+  
+
+  <!-- Scripts-->
+  
+
+  <!-- Google Custom Search -->
+  <script xml:space="preserve">
+    (function() {
+    var cx = '003215582122030917471:oq23albfeam';
+    var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+    '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+    })();
+  </script>
+
+  <!-- Google Analytics -->
+  <script xml:space="preserve" type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-4936091-2']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+ </head>
+
+ <!-- Body Start -->
+ <body>
+  <div id="header">
+   <!-- Google CSE Search Box -->
+   <div id="google" class="gcse-searchbox-only" data-resultsUrl="http://www.vlfeat.org/search.html"></div>
+   <h1><a shape="rect" href="../index.html" class="plain"><span id="vlfeat">VLFeat</span><span id="dotorg">.org</span></a></h1>
+  </div>
+  <div id="headbanner">
+   Documentation - Matlab API - SIFT - vl_siftdescriptor
+  </div>
+  <div id="pagebody">
+   <div id="sidebar"> <!-- Navigation Start -->
+    <ul>
+<li><a href="../index.html">Home</a>
+</li>
+<li><a href="../download.html">Download</a>
+</li>
+<li><a href="../doc.html">Documentation</a>
+<ul>
+<li><a href="mdoc.html">Matlab API</a>
+</li>
+<li><a href="../api/index.html">C API</a>
+</li>
+<li><a href="../man/man.html">Man pages</a>
+</li>
+</ul></li>
+<li><a href="../overview/tut.html">Tutorials</a>
+</li>
+<li><a href="../applications/apps.html">Applications</a>
+</li>
+</ul>
+
+   </div> <!-- sidebar -->
+   <div id="content">
+    <div class="mdoc">
+<ul class="breadcrumb"><li><a href="mdoc.html">Index</a></li><li><a href="vl_sift.html">Prev</a></li><li><a href="vl_ubcmatch.html">Next</a></li></ul><div class="documentation"><p>
+D = <a href="vl_siftdescriptor.html">VL_SIFTDESCRIPTOR</a>(GRAD, F) calculates the SIFT descriptors of
+the keypoints F on the pre-processed image GRAD. GRAD is a 2xMxN
+array. The first layer GRAD(1,:,:) contains the modulus of
+gradient of the original image modulus. The second layer
+GRAD(2,:,:) contains the gradient angle (measured in radians,
+clockwise, starting from the X axis -- this assumes that the Y
+axis points down). The matrix F contains one column per keypoint
+with the X, Y, SGIMA and ANLGE parameters.
+</p><p>
+In order to match the standard SIFT descriptor, the gradient GRAD
+should be calculated after mapping the image to the keypoint
+scale. This is obtained by smoothing the image by a a Gaussian
+kernel of variance equal to the scale of the keypoint.
+Additionaly, SIFT assumes that the input image is pre-smoothed at
+scale 0.5 (this roughly compensates for the effect of the CCD
+integrators), so the amount of smoothing that needs to be applied
+is slightly less. The following code computes a standard SIFT
+descriptor by using <a href="vl_siftdescriptor.html">VL_SIFTDESCRIPTOR</a>():
+</p><pre>
+  I_       = vl_imsmooth(im2double(I), sqrt(f(3)^2 - 0.5^2)) ;
+  [Ix, Iy] = vl_grad(I_) ;
+  mod      = sqrt(Ix.^2 + Iy.^2) ;
+  ang      = atan2(Iy,Ix) ;
+  grd      = shiftdim(cat(3,mod,ang),2) ;
+  grd      = single(grd) ;
+  d        = vl_siftdescriptor(grd, f) ;
+</pre><dl><dt>
+Remark
+</dt><dd><p>
+The above fragment generates results which are very close
+but not identical to the output of <a href="vl_sift.html">VL_SIFT</a>() as the latter
+samples the scale space at finite steps.
+</p></dd><dt>
+Remark
+</dt><dd><p>
+For object categorization is sometimes useful to compute
+SIFT descriptors without smoothing the image.
+</p></dd></dl><p>
+Options:
+</p><dl><dt>
+Magnif
+<span class="defaults">[3]</span></dt><dd><p>
+Magnification factor (see <a href="vl_sift.html">VL_SIFT</a>()).
+</p></dd><dt>
+NormThresh
+<span class="defaults">[-inf]</span></dt><dd><p>
+Set the minimum l2-norm of the descriptors before
+normalization. Descriptors below the threshold are set to zero.
+</p></dd></dl></div></div>
+   </div>
+   <div class="clear">&nbsp;</div>
+  </div> <!-- pagebody -->
+  <div id="footer">
+   &copy; 2007-12 The VLFeat Authors
+  </div> <!-- footer -->
+ </body>
+ <!-- Body ends -->
+</html>
+
+ 

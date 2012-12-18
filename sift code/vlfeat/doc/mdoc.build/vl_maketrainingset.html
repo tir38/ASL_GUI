@@ -1,0 +1,85 @@
+<group>
+<ul class='breadcrumb'><li><a href='%pathto:mdoc;'>Index</a></li><li><a href='%pathto:vl_localmax;'>Prev</a></li><li><a href='%pathto:vl_numder;'>Next</a></li></ul><div class="documentation"><p>
+D = <a href="%pathto:vl_maketrainingset;">VL_MAKETRAININGSET</a>(X, Y) creates a training set struct D, given
+the training vectors X and their labels Y. The training set D has
+the fields DATA and LABELS.
+</p><p>
+If the HOMKERMAP option is used, a third field MAP is present in
+D. MAP is another struct with the following fields:
+</p><dl><dt>
+order
+</dt><dd><p>
+Order of the homogeneous kernel map.
+</p></dd><dt>
+kernelType
+</dt><dd><p>
+Type of kernel.
+</p></dd><dt>
+windowType
+</dt><dd><p>
+Type of window.
+</p></dd><dt>
+gamma
+</dt><dd><p>
+Value of the parameter GAMMA.
+</p></dd><dt>
+period
+</dt><dd><p>
+Value of the parameter PERIOD.
+</p></dd></dl><p>
+<a href="%pathto:vl_maketrainingset;">VL_MAKETRAININGSET</a>() accepts the following options:
+</p><dl><dt>
+HOMKERMAP
+<span class="defaults">[empty]</span></dt><dd><p>
+Specify the use of an Homogeneus Kernel map for the training
+data (See [2],[3]). The passed value N is such that a 2*N+1
+dimensional approximated kernel map is computed. Each
+training data point is expanded online into a vector of
+dimension 2*N+1.
+</p></dd><dt>
+KChi2
+</dt><dd><p>
+Compute the map for the Chi2 kernel.
+</p></dd><dt>
+KINTERS
+</dt><dd><p>
+Compute the map for the intersection kernel.
+</p></dd><dt>
+KL1
+</dt><dd><p>
+Same as KINTERS, but deprecated as the name is not fully
+accurate.
+</p></dd><dt>
+KJS
+</dt><dd><p>
+Compute the map for the JS (Jensen-Shannon) kernel.
+</p></dd><dt>
+Period
+<span class="defaults">[automatically tuned]</span></dt><dd><p>
+Set the period of the kernel specturm. The approximation is
+based on periodicizing the kernel specturm. If not specified,
+the period is automatically set based on the heuristic described
+in [2].
+</p></dd><dt>
+Window
+<span class="defaults">[RECTANGULAR]</span></dt><dd><p>
+Set the window used to truncate the spectrum before The window
+can be either RECTANGULAR or UNIFORM window. See [2] and the API
+documentation for details.
+</p></dd><dt>
+Gamma
+<span class="defaults">[1]</span></dt><dd><p>
+Set the homogeneity degree of the kernel. The standard kernels
+are 1-homogeneous, but sometimes smaller values perform better
+in applications. See [2] for details.
+</p></dd><dt>
+Example
+</dt><dd><p>
+VL_MAKETRAININGSET must be used together with VL_SVMPEGASOS,
+</p><pre>
+  vl_twister('state',0) ;
+  dataset = vl_maketrainingset(x,y) ;
+  w = vl_svmpegasos(dataset,lambda,'NumIterations',1000) ;
+</pre></dd></dl><p>
+See also: <a href="%pathto:vl_svmpegasos;">VL_SVMPEGASOS</a>(), <a href="%pathto:vl_homkermap;">VL_HOMKERMAP</a>(), <a href="%pathto:vl_help;">VL_HELP</a>().
+</p></div></group>

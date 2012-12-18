@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <!-- Favicon -->
+  <link href="../images/vl_blue.ico" type="image/x-icon" rel="icon"></link>
+  <link href="../images/vl_blue.ico" type="image/x-icon" rel="shortcut icon"></link>
+
+  <!-- Stylesheets -->
+  <link href="../web.css" type="text/css" rel="stylesheet"></link>
+  <link href="../pygmentize.css" type="text/css" rel="stylesheet"></link>
+  <title>VLFeat - Documentation - Matlab API - MISC - vl_pegasos</title>
+  
+
+  <!-- Scripts-->
+  
+
+  <!-- Google Custom Search -->
+  <script xml:space="preserve">
+    (function() {
+    var cx = '003215582122030917471:oq23albfeam';
+    var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+    '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+    })();
+  </script>
+
+  <!-- Google Analytics -->
+  <script xml:space="preserve" type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-4936091-2']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+ </head>
+
+ <!-- Body Start -->
+ <body>
+  <div id="header">
+   <!-- Google CSE Search Box -->
+   <div id="google" class="gcse-searchbox-only" data-resultsUrl="http://www.vlfeat.org/search.html"></div>
+   <h1><a shape="rect" href="../index.html" class="plain"><span id="vlfeat">VLFeat</span><span id="dotorg">.org</span></a></h1>
+  </div>
+  <div id="headbanner">
+   Documentation - Matlab API - MISC - vl_pegasos
+  </div>
+  <div id="pagebody">
+   <div id="sidebar"> <!-- Navigation Start -->
+    <ul>
+<li><a href="../index.html">Home</a>
+</li>
+<li><a href="../download.html">Download</a>
+</li>
+<li><a href="../doc.html">Documentation</a>
+<ul>
+<li><a href="mdoc.html">Matlab API</a>
+</li>
+<li><a href="../api/index.html">C API</a>
+</li>
+<li><a href="../man/man.html">Man pages</a>
+</li>
+</ul></li>
+<li><a href="../overview/tut.html">Tutorials</a>
+</li>
+<li><a href="../applications/apps.html">Applications</a>
+</li>
+</ul>
+
+   </div> <!-- sidebar -->
+   <div id="content">
+    <div class="mdoc">
+<ul class="breadcrumb"><li><a href="mdoc.html">Index</a></li><li><a href="vl_override.html">Prev</a></li><li><a href="vl_sampleinthist.html">Next</a></li></ul><div class="documentation"><p>
+W = <a href="vl_pegasos.html">VL_PEGASOS</a>(X, Y, LAMBDA) learns a linear SVM W given training
+vectors X, their labels Y, and the regularization parameter LAMBDA
+using the PEGASOS [1] solver. The algorithm finds a minimizer W of
+the objective function
+</p><pre>
+  LAMBDA/2 |W|^2 + 1/N SUM_i LOSS(W, X(:,i), Y(i))
+</pre><p>
+where LOSS(W,X,Y) = MAX(0, 1 - Y W'X) is the hinge loss and N is
+the number of training vectors in X.
+</p><p>
+[W B INFO] = <a href="vl_svmpegasos.html">VL_SVMPEGASOS</a>(X, Y, LAMBDA) learns a linear SVM W
+and a bias B given training vectors X, their labels Y, and the
+regularization parameter LAMBDA using the PEGASOS [1]
+solver. INFO is a struct containing the input parameters plus
+diagnostic informations:
+</p><dl><dt>
+energy
+</dt><dd><p>
+SVM energy value.
+</p></dd><dt>
+iterations
+</dt><dd><p>
+Number of iterations performed.
+</p></dd><dt>
+elapseTime
+</dt><dd><p>
+Elapsed time since the start of the SVM learning.
+</p></dd><dt>
+regulizerTerm
+</dt><dd><p>
+Value of the SVM regulizer term.
+</p></dd><dt>
+lossPos
+</dt><dd><p>
+Value of loss function only for data points labeled positives.
+</p></dd><dt>
+lossNeg
+</dt><dd><p>
+Value of loss function onlt for data points labeled negatives.
+</p></dd><dt>
+hardLossPos
+</dt><dd><p>
+Number of mislabeled positive points.
+</p></dd><dt>
+hardLossNeg
+</dt><dd><p>
+Number of mislabeled negative points.
+</p></dd></dl><p>
+ALGORITHM. PEGASOS is an implementation of stochastic subgradient
+descent. At each iteration a data point is selected at random, the
+subgradient of the cost function relative to that data point is
+computed, and a step is taken in that direction. The step size is
+inversely proportional to the iteration number. See [1] for
+details.
+</p><p>
+<a href="vl_svmpegasos.html">VL_SVMPEGASOS</a>() accepts the following options:
+</p><dl><dt>
+Epsilon
+<span class="defaults">[empty]</span></dt><dd><p>
+Specify the SVM stopping criterion threshold. If not
+specified VL_SVMPEGASOS will finish when the maximum number
+of iterations is reached. The stopping criterion is tested
+after each ENERGYFREQ iteration.
+</p></dd><dt>
+MaxIterations
+<span class="defaults">[10 / LAMBDA]</span></dt><dd><p>
+Sets the maximum number of iterations.
+</p></dd><dt>
+BiasMultiplier
+<span class="defaults">[0]</span></dt><dd><p>
+Appends to the data X the specified scalar value B. This
+approximates the training of a linear SVM with bias.
+</p></dd><dt>
+StartingModel
+<span class="defaults">[null vector]</span></dt><dd><p>
+Specify the initial value for the weight vector W.
+</p></dd><dt>
+StartingIteration
+<span class="defaults">[1]</span></dt><dd><p>
+Specify the iteration number to start from. The only effect
+is to change the step size, as this is inversely proportional
+to the iteration number.
+</p></dd><dt>
+StartingBias
+<span class="defaults">[0]</span></dt><dd><p>
+Specify the inital bias value.
+</p></dd><dt>
+BiasLearningRate
+<span class="defaults">[1]</span></dt><dd><p>
+Specify the frequency of the bias learning. The default
+setting updates the bias at each iteration.
+</p></dd><dt>
+Permutation
+<span class="defaults">[empty]</span></dt><dd><p>
+Specify a permutation PERM to be used to sample the data (this
+disables random sampling). Specifically, at the T-th iteration
+the algorithm takes a step w.r.t. the PERM[T']-th data point,
+where T' is T modulo the number of data samples
+(i.e. MOD(T'-1,NUMSAMPLES)+1). PERM needs not to be
+bijective. This allows specifying certain data points more or
+less frequently, implicitly increasing their relative weight in
+the error term. A common application is to balance an unbalanced
+dataset.
+</p></dd><dt>
+DiagnosticFunction
+<span class="defaults">[empty]</span></dt><dd><p>
+Specify a function handle to be called every ENERGYFREQ iterations.
+</p></dd><dt>
+DiagnosticCallRef
+<span class="defaults">[empty]</span></dt><dd><p>
+Specify a paramater to be passed to the DIAGNOSTICFUNCTION handle.
+</p></dd><dt>
+EnergyFreq
+<span class="defaults">[100]</span></dt><dd><p>
+Specify how often the SVM energy is computed.
+</p></dd><dt>
+HOMKERMAP
+<span class="defaults">[empty]</span></dt><dd><p>
+Specify the use of an Homogeneus Kernel map for the training
+data (See [2],[3]). The passed value N is such that a 2*N+1
+dimensional approximated kernel map is computed. Each
+training data point is expanded online into a vector of
+dimension 2*N+1.
+</p></dd><dt>
+KChi2
+</dt><dd><p>
+Compute the map for the Chi2 kernel.
+</p></dd><dt>
+KINTERS
+</dt><dd><p>
+Compute the map for the intersection kernel.
+</p></dd><dt>
+KL1
+</dt><dd><p>
+Same as KINTERS, but deprecated as the name is not fully
+accurate.
+</p></dd><dt>
+KJS
+</dt><dd><p>
+Compute the map for the JS (Jensen-Shannon) kernel.
+</p></dd><dt>
+Period
+<span class="defaults">[automatically tuned]</span></dt><dd><p>
+Set the period of the kernel specturm. The approximation is
+based on periodicizing the kernel specturm. If not specified,
+the period is automatically set based on the heuristic described
+in [2].
+</p></dd><dt>
+Window
+<span class="defaults">[RECTANGULAR]</span></dt><dd><p>
+Set the window used to truncate the spectrum before The window
+can be either RECTANGULAR or UNIFORM window. See [2] and the API
+documentation for details.
+</p></dd><dt>
+Gamma
+<span class="defaults">[1]</span></dt><dd><p>
+Set the homogeneity degree of the kernel. The standard kernels
+are 1-homogeneous, but sometimes smaller values perform better
+in applications. See [2] for details.
+</p></dd><dt>
+Verbose
+</dt><dd><p>
+Be verbose.
+</p></dd><dt>
+Example
+</dt><dd><p>
+The options StartingModel and StartingIteration can be used
+to continue training. I.e., the command
+</p><pre>
+  vl_twister('state',0) ;
+  w = vl_pegasos(x,y,lambda,'NumIterations',1000) ;
+</pre><p>
+produces the same result as the sequence
+</p><pre>
+  vl_twister('state',0) ;
+  w = vl_pegasos(x,y,lambda,'NumIterations',500) ;
+  w = vl_pegasos(x,y,lambda,'NumIterations',500, ...
+                 'StartingIteration', 501, ...
+                 'StartingModel', w) ;
+</pre></dd><dt>
+REFERENCES
+</dt><dd><p>
+[1] S. Shalev-Shwartz, Y. Singer, N. Srebro, and
+A. Cotter. Pegasos: Primal Estimated sub-GrAdient SOlver for
+SVM. MBP, 2010.
+</p><p>
+[2] A. Vedaldi and A. Zisserman
+`Efficient Additive Kernels via Explicit Feature Maps',
+Proc. CVPR, 2010.
+</p><p>
+[3] A. Vedaldi and A. Zisserman
+`Efficient Additive Kernels via Explicit Feature Maps',
+PAMI, 2011 (submitted).
+</p></dd></dl><p>
+See also: <a href="vl_homkermap.html">VL_HOMKERMAP</a>(), <a href="vl_help.html">VL_HELP</a>().
+</p></div></div>
+   </div>
+   <div class="clear">&nbsp;</div>
+  </div> <!-- pagebody -->
+  <div id="footer">
+   &copy; 2007-12 The VLFeat Authors
+  </div> <!-- footer -->
+ </body>
+ <!-- Body ends -->
+</html>
+
+ 
