@@ -1,7 +1,9 @@
-README.txt
------------------------
-Created 4/4/12 MRE
-Last Updated 4/11/12 MRE
+If you reach an error `"Undefined function 'testSift'` then you need to find all occurances of this method and uncomment the `mlpfwd` method instead:
+
+[mPrediction,~]=testSift(trainingSet,predictImage); // replace this ...
+mPrediction = mlpfwd(mNet,mFrame); // ... with this
+
+This is the result of an incomplete refactor.
 
 ===========================================================================
 24-787 Project: American Sign Language (ASL) Recognition System
