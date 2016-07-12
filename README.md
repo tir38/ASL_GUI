@@ -5,6 +5,8 @@ If you reach an error `"Undefined function 'testSift'` then you need to find all
 mPrediction = mlpfwd(mNet,mFrame); // ... with this
 ```
 
+You'll then need to get `mlpfwd` from [here](https://www.mathworks.com/matlabcentral/fileexchange/2654-netlab/content/mlpfwd.m)
+
 This is the result of an incomplete refactor.
 
 ===========================================================================
